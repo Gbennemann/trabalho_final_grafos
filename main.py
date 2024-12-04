@@ -2,31 +2,23 @@ import networkx as nx
 import matplotlib.pyplot as plt
 from itertools import permutations
 
-
-# Classe Grafo
 class Grafo:
     def __init__(self):
         self.grafo = nx.Graph()
 
     def add_vertex(self, vertice):
-        if vertice in self.grafo.nodes:
-            raise ValueError(f"O vértice '{vertice}' já existe no grafo.")
         self.grafo.add_node(vertice)
 
     def add_edge(self, vertice1, vertice2, peso):
-        if not (vertice1 in self.grafo.nodes and vertice2 in self.grafo.nodes):
-            raise ValueError("Ambos os vértices devem existir no grafo.")
-        if self.grafo.has_edge(vertice1, vertice2):
-            raise ValueError(f"Aresta entre '{vertice1}' e '{vertice2}' já existe.")
-        if peso <= 0:
-            raise ValueError("O peso da aresta deve ser um número positivo.")
         self.grafo.add_edge(vertice1, vertice2, weight=peso)
 
-    def mostrar_grafo(self):
-        if self.grafo.number_of_nodes() == 0:
-            raise ValueError("O grafo está vazio. Adicione vértices e arestas antes de visualizá-lo.")
+    def mostrar_grafo(self, cores=None):
         pos = nx.spring_layout(self.grafo)
-        nx.draw(self.grafo, pos, with_labels=True, node_color="skyblue", node_size=500)
+        if cores:
+            node_colors = [cores.get(vertice, 'skyblue') for vertice in self.grafo.nodes]
+            nx.draw(self.grafo, pos, with_labels=True, node_color=node_colors, node_size=500)
+        else:
+            nx.draw(self.grafo, pos, with_labels=True, node_color="skyblue", node_size=500)
         labels = nx.get_edge_attributes(self.grafo, "weight")
         nx.draw_networkx_edge_labels(self.grafo, pos, edge_labels=labels)
         plt.show()
@@ -41,7 +33,9 @@ class Grafo:
     def euleriano(self):
         if nx.is_eulerian(self.grafo):
             return list(nx.eulerian_circuit(self.grafo))
-        return None
+        else:
+            print("O grafo não é Euleriano.")
+            return None
 
     def hamiltoniano(self):
         vertices = list(self.grafo.nodes)
@@ -63,9 +57,18 @@ class Grafo:
         return melhor_caminho, melhor_custo
 
     def arvore_minima(self):
-        if self.grafo.number_of_edges() == 0:
-            raise ValueError("O grafo não possui arestas para calcular a árvore de custo mínimo.")
-        return nx.minimum_spanning_tree(self.grafo)
+        mst = nx.minimum_spanning_tree(self.grafo)
+        return mst
+
+    def colorir_grafo(self):
+        cores = {}
+        for vertice in self.grafo.nodes:
+            vizinhos = set(cores.get(v, None) for v in self.grafo.neighbors(vertice))
+            cor = 1
+            while cor in vizinhos:  # Encontra a primeira cor disponível
+                cor += 1
+            cores[vertice] = cor
+        return cores
 
 
 # Menu Interativo
@@ -80,65 +83,92 @@ def menu():
         print("5. Problema Euleriano")
         print("6. Problema Hamiltoniano")
         print("7. Árvore de custo mínimo")
-        print("8. Sair")
+        print("8. Colorir grafo")
+        print("9. Sair")
         opcao = input("Escolha uma opção: ")
 
-        try:
-            if opcao == "1":
-                vertice = input("Digite o nome do vértice: ").strip()
-                if not vertice:
-                    print("O nome do vértice não pode estar vazio.")
-                else:
-                    g.add_vertex(vertice)
-                    print(f"Vértice '{vertice}' adicionado com sucesso.")
+        if opcao == "1":
+            vertice = input("Digite o nome do vértice: ")
+            if vertice in g.grafo.nodes:
+                print(f"O vértice '{vertice}' já existe no grafo.")
+            else:
+                g.add_vertex(vertice)
+                print(f"Vértice '{vertice}' adicionado com sucesso.")
 
-            elif opcao == "2":
-                if len(g.grafo.nodes) < 2:
-                    print("É necessário ter pelo menos dois vértices para adicionar uma aresta.")
-                else:
-                    v1 = input("Digite o primeiro vértice: ").strip()
-                    v2 = input("Digite o segundo vértice: ").strip()
-                    peso = input("Digite o peso da aresta: ")
+        elif opcao == "2":
+            if len(g.grafo.nodes) < 2:
+                print(
+                    "É necessário ter pelo menos dois vértices para adicionar uma aresta."
+                )
+            else:
+                v1 = input("Digite o primeiro vértice: ")
+                v2 = input("Digite o segundo vértice: ")
+                peso = input("Digite o peso da aresta: ")
 
+                if v1 not in g.grafo.nodes or v2 not in g.grafo.nodes:
+                    print("Ambos os vértices devem existir no grafo.")
+                else:
                     try:
                         peso = float(peso)
                         g.add_edge(v1, v2, peso)
-                        print(f"Aresta entre '{v1}' e '{v2}' com peso {peso} adicionada com sucesso.")
+                        print(
+                            f"Aresta entre '{v1}' e '{v2}' com peso {peso} adicionada com sucesso."
+                        )
                     except ValueError:
                         print("Peso inválido. Digite um número válido.")
-                    except Exception as e:
-                        print(e)
 
-            elif opcao == "3":
+        elif opcao == "3":
+            if len(g.grafo.nodes) == 0:
+                print(
+                    "O grafo está vazio. Adicione vértices e arestas antes de visualizá-lo."
+                )
+            else:
                 g.mostrar_grafo()
 
-            elif opcao == "4":
-                if len(g.grafo.nodes) < 2:
-                    print("O grafo precisa ter pelo menos dois vértices para calcular o menor caminho.")
-                else:
-                    print(f"Vértices disponíveis: {list(g.grafo.nodes)}")
-                    inicio = input("Vértice inicial: ").strip()
-                    fim = input("Vértice final: ").strip()
-                    try:
-                        print("Menor caminho:", g.menor_caminho(inicio, fim))
-                    except ValueError as e:
-                        print(e)
+        elif opcao == "4":
+            if len(g.grafo.nodes) < 2:
+                print(
+                    "O grafo precisa ter pelo menos dois vértices para calcular o menor caminho."
+                )
+            else:
+                print(f"Vértices disponíveis: {list(g.grafo.nodes)}")
+                inicio = input("Vértice inicial: ")
+                fim = input("Vértice final: ")
+                try:
+                    print("Menor caminho:", g.menor_caminho(inicio, fim))
+                except ValueError as e:
+                    print(e)
 
-            elif opcao == "5":
+        elif opcao == "5":
+            if len(g.grafo.edges) == 0:
+                print(
+                    "O grafo não possui arestas. Adicione arestas antes de verificar o problema Euleriano."
+                )
+            else:
                 resultado = g.euleriano()
                 if resultado:
                     print("Caminho Euleriano encontrado:", resultado)
-                else:
-                    print("O grafo não é Euleriano.")
 
-            elif opcao == "6":
+        elif opcao == "6":
+            if len(g.grafo.nodes) < 3:
+                print(
+                    "O grafo precisa ter pelo menos três vértices para resolver o problema Hamiltoniano."
+                )
+            else:
                 caminho, custo = g.hamiltoniano()
                 if caminho:
-                    print(f"Caminho Hamiltoniano encontrado: {caminho} com custo {custo}")
+                    print(
+                        f"Caminho Hamiltoniano encontrado: {caminho} com custo {custo}"
+                    )
                 else:
                     print("Não foi possível encontrar um caminho Hamiltoniano.")
 
-            elif opcao == "7":
+        elif opcao == "7":
+            if len(g.grafo.edges) == 0:
+                print(
+                    "O grafo não possui arestas. Adicione arestas antes de calcular a árvore de custo mínimo."
+                )
+            else:
                 mst = g.arvore_minima()
                 print("Árvore de custo mínimo encontrada:")
                 for edge in mst.edges(data=True):
@@ -146,15 +176,22 @@ def menu():
                 nx.draw(mst, with_labels=True, node_color="lightgreen", node_size=500)
                 plt.show()
 
-            elif opcao == "8":
-                print("Saindo...")
-                break
-
+        elif opcao == "8":
+            if len(g.grafo.nodes) == 0:
+                print("O grafo está vazio. Adicione vértices antes de colorir.")
             else:
-                print("Opção inválida. Por favor, escolha uma opção válida.")
+                cores = g.colorir_grafo()
+                print("Cores atribuídas aos vértices:")
+                for vertice, cor in cores.items():
+                    print(f"Vértice {vertice} -> Cor {cor}")
+                g.mostrar_grafo(cores)
 
-        except Exception as e:
-            print(f"Ocorreu um erro: {e}")
+        elif opcao == "9":
+            print("Saindo...")
+            break
+
+        else:
+            print("Opção inválida. Por favor, escolha uma opção válida.")
 
 
 # Executa o menu
