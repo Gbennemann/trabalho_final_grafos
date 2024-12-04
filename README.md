@@ -55,14 +55,39 @@ A aplicação oferece um menu interativo no terminal que permite ao usuário:
 
 ## **Conclusão**
 
-O projeto foi uma aplicação prática dos conceitos estudados durante o curso de **Teoria dos Grafos**, permitindo resolver problemas clássicos de grafos como o **problema do carteiro chinês**, o **problema do caixeiro viajante**, o **menor caminho entre dois vértices**, a **árvore expansiva de custo mínimo** e a **coloração de grafos**. A implementação dos algoritmos estudados, como **Dijkstra**, **Fleury**, **Prim** e **Kruskal**, trouxe uma compreensão mais profunda de como os grafos podem ser manipulados computacionalmente.
+O projeto foi uma aplicação prática dos conceitos estudados durante o curso de **Teoria dos Grafos**, permitindo resolver problemas clássicos de grafos como o **problema do carteiro chinês**, o **problema do caixeiro viajante**, o **menor caminho entre dois vértices**, a **árvore expansiva de custo mínimo** e a **coloração de grafos**. A implementação dos algoritmos estudados, como **Dijkstra**, **Fleury**, **Prim** e **Kruskal**, 
+me trouxe uma compreensão mais "real" de como os grafos podem ser manipulados computacionalmente.
 
-A aplicação serviu como uma excelente ferramenta para entender a teoria por trás dos algoritmos e também para visualizar como esses problemas são resolvidos de forma prática. Com o uso de bibliotecas como **NetworkX** e **Matplotlib**, foi possível criar não apenas a lógica de resolução dos problemas, mas também uma interface visual para facilitar a compreensão.
+A aplicação serviu como uma excelente ferramenta para eu entender melhor a teoria por trás dos algoritmos e também para visualizar como esses problemas são resolvidos na prática. 
+Com o uso de bibliotecas como a **NetworkX** e **Matplotlib**, foi possível criar não apenas a lógica de resolução dos problemas, mas também uma interface visual para facilitar a compreensão de quem poderá utilizar esse código no futuro.
 
 ---
 
 ## **Execução**
-Para rodar a aplicação, basta garantir que as dependências estejam instaladas:
+
+Para rodar a aplicação, você precisará do Python instalado em seu ambiente, assim como da biblioteca **NetworkX**. Siga as instruções abaixo para garantir que o ambiente esteja pronto para a execução.
+
+### Pré-requisitos
+
+1. **Python** (versão 3.x): Se ainda não tiver o Python instalado, faça o download e a instalação a partir do [site oficial do Python](https://www.python.org/downloads/).
+
+2. **NetworkX**: Biblioteca necessária para manipulação de grafos. Caso ainda não tenha o **NetworkX** instalado, instale-o com o seguinte comando no terminal:
+
+    ```bash
+    pip install networkx
+    ```
+
+## Como Executar
+
+Siga os passos abaixo para rodar a aplicação.
+
+### Passo 1: Baixar o código
+
+Primeiro, faça o download ou clone o repositório contendo o código da aplicação para seu ambiente local.
+
+### Passo 2: Navegar até o diretório do código
+
+No terminal, navegue até o diretório onde o código foi baixado. Utilize o seguinte comando para acessar o diretório do projeto:
 
 ```bash
-pip install networkx matplotlib
+cd /caminho/para/o/diretorio
